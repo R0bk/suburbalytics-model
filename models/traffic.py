@@ -1,69 +1,81 @@
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LSTM
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, normalize, scale
 from sklearn.metrics import mean_squared_error
 import numpy as np
 import keras
+import math
 import csv
 import sys
 import os
 
-csvd = '../data/data-collection/traffic/data.csv'
+scaler = MinMaxScaler(feature_range=(0, 1))
 
 
-def load_csv():
+def load_csv(file):
+    csvd = '../data-collection/traffic/' + file
     data = np.genfromtxt(csvd, delimiter=',')
-    X = data[1:15, 1]
-    y = data[:]
-
-    print(X)
-
-    norm_X = preprocessing.normalize(X)
-    stand_X = preprocessing.scale(X)
+    X = data[1:15, 0]
+    y = data[1:15, 1]
+    
+    X = scaler.fit_transform(X)
+    y = scaler.fit_transform(y)
+    norm_X = normalize(X)
+    stand_X = scale(X)
     split = int(0.7 * len(X))
     return(X, y, split, data, norm_X, stand_X)
 
-X, y, split, data, norm_X, stand_X = load_csv()
-test_size = len(norm_X) - split
-train, test = norm_X[0: split, :], norm_X[split: len(norm_X), :]
 
-look_back = 1
-trainX, trainY = create_norm_X(train, look_back)
-testX, testY = create_norm_X(test, look_back)
+def list_of_lists(array):
+    return(np.array([[x] for x in array]))
 
-trainX = numpy.reshape(trainX, (trainX.shape[0], 1, trainX.shape[1]))
-testX = numpy.reshape(testX, (testX.shape[0], 1, testX.shape[1]))
 
-model = Sequential()
-model.add(LSTM(4, input_dim=look_back))
-model.add(Dense(1))
-model.compile(loss='mean_squared_error', optimizer='adam')
-model.fit(trainX, trainY, nb_epoch=100, batch_size=1, verbose=2)
+def model(file, n): 
+    X, y, split, data, norm_X, stand_X = load_csv(file)
 
-trainPredict = model.predict(trainX)
-testPredict = model.predict(testX)
+    test_size = len(norm_X) - split
+    X = np.array([x for x in X])
+    y = np.array([x for x in y])
+    #train, test = norm_X[0: split, :], norm_X[split: len(norm_X), :]
 
-trainPredict = scaler.inverse_transform(trainPredict)
-trainY = scaler.inverse_transform([trainY])
-testPredict = scaler.inverse_transform(testPredict)
-testY = scaler.inverse_transform([testY])
+    look_back = 1
+    trainX, trainY = (list_of_lists(X[:split]), list_of_lists(y[:split]))
+    testX, testY = (list_of_lists(X[split:]), list_of_lists(y[split:]))
 
-trainScore = math.sqrt(mean_squared_error(trainY[0], trainPredict[:, 0]))
-print('Train Score: %.2f RMSE' % (trainScore))
-testScore = math.sqrt(mean_squared_error(testY[0], testPredict[:, 0]))
-print('Test Score: %.2f RMSE' % (testScore))
+    trainX = np.reshape(trainX, (trainX.shape[0], 1, trainX.shape[1]))
+    testX = np.reshape(testX, (testX.shape[0], 1, trainX.shape[1]))
 
-trainPredictPlot = numpy.empty_like(norm_X)
-trainPredictPlot[:, :] = numpy.nan
-trainPredictPlot[look_back:len(trainPredict) + look_back, :] = trainPredict
+    model = Sequential()
+    model.add(LSTM(4, input_dim=look_back))
+    model.add(Dense(1))
+    model.compile(loss='mean_squared_error', optimizer='adam')
+    model.fit(trainX, trainY, nb_epoch=100, batch_size=1, verbose=2)
 
-testPredictPlot = numpy.empty_like(norm_X)
-testPredictPlot[:, :] = numpy.nan
-testPredictPlot[len(trainPredict) + (look_back * 2) +
-                1:len(norm_X) - 1, :] = testPredict
+    trainPredict = model.predict(trainX)
+    testPredict = model.predict(testX)
 
-plt.plot(scaler.inverse_transform(norm_X))
-plt.plot(trainPredictPlot)
-plt.plot(testPredictPlot)
-plt.show()
+    trainPredict = scaler.inverse_transform(trainPredict)
+    trainY = scaler.inverse_transform(trainY)
+    testPredict = scaler.inverse_transform(testPredict)
+    testY = scaler.inverse_transform(testY)
+    print(testPredict)
+
+    future = []
+    for i in range(n):
+        if not len(future):
+            value = model.predict(testX)[-1]
+        else:
+            print(list_of_lists(future))
+            value = model.predict(list_of_lists(future))[-1]
+        future.append(value)
+    with open('future' + file, 'w') as f:
+        wr = csv.writer(f, delimiter=',')
+        wr.writerow(future)
+
+def predicter(n, data):
+    for file in os.listdir(data):
+    	print('processing:\t' + file)
+        model(file, n)
+
+predicter(12, '../data-collection/traffic/')

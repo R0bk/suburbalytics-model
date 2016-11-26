@@ -1,0 +1,19 @@
+#,Corridor Name,Origin to Destination,Corridor Length (Km),AM Peak (7-9AM) mm:ss,PM Peak (4-7PM) mm:ss
+1,Coronation Drive,High St to Boomerang St,2.64,8:21,4:41
+2,Fairfield Road-Annerley Road,Sherwood Rd to Stanley St,6.77,13:42,11:18
+3,Inner City Bypass Eastbound,Hale St/Milton Rd to KSD/Cooksley St,5.63,6:10,6:14
+4,Inner City Bypass Westbound,KSD/Cooksley St to Hale St/Milton Rd,5.63,7:06,5:51
+5,Ipswich Road-Bradfield Highway,Hamilton Rd to Ann/Gipps St,9.44,20:46,18:58
+6,Kelvin Grove Road,Samford Rd to MusgraveRd/Kelvin Grove Rd,4.24,12:24,7:28
+7,Kingsford Smith Drive-Breakfast Creek Road,Links Ave to Montpelier/Breakfast Creek Rd,5.52,12:56,9:05
+8,Logan Road,Klumpp Rd to Old Cleveland Rd,7.36,12:16,12:31
+9,Lutwyche Road-Bowen Br Road,Norman Ave to Gregory Tce,3.93,8:03,7:20
+10,Milton Road,Croydon St/Morley St to Petrie Tce,2.7,5:38,5:38
+11,Moggill Road,Russell Tce to Coronation Dr,3.31,6:36,7:58
+12,Old Cleveland Road,Creek Rd to Montague St,5.87,12:53,10:12
+13,Oxley Road-Coonan Street,Oxley Rd Ped Xing to Moggill Rd,8.39,18:39,15:33
+14,Sandgate Road-Abbotsford Road,Bayview St to Campbell St/Abbotsford Rd,3.94,7:30,6:13
+15,Stanley Street (inbound),Old Cleveland Rd/Cavendish Rd to Grey St/Vulture St,4.05,14:00,10:28
+16,Vulture Street (outbound),Grey St/Vulture St to Old Cleveland Rd/Cavendish Rd,4.05,9:38,10:04
+17,Waterworks Road-Musgrave Road,Settlement Rd to Kelvin Grove Rd/Musgrave Rd,8.11,14:30,14:05
+18,Wynnum Road,Belmont Rd to Story Bridge Sth approach,10.5,25:09:00,19:40
